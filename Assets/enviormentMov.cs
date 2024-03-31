@@ -16,9 +16,5 @@ public class enviormentMov : MonoBehaviour
         transform.position += new Vector3(0, 0, -50) * Time.deltaTime;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("destroy"))
-            Destroy(gameObject);
-    }
+   
 }
