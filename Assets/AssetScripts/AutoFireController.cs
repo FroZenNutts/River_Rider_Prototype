@@ -1,57 +1,59 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AutoFireController : MonoBehaviour
 {
-    public GameObject projectilePrefab; // Prefab of the projectile to be fired
-    public float fireRate = 1f; // Rate of fire in shots per second
-    private float nextFireTime; // Time of the next allowed shot
-    private int shotsFired; // Number of shots fired
-    private bool isFiring; // Flag to track if currently firing
+    public GameObject projectilePrefab; // Prefab of the projectile
+    public Transform firePoint; // Transform representing the point where projectiles will be fired from
+    public float fireRate = 0.5f; // Rate of fire (projectiles per second)
+    public string enemyBoatTag = "Enemy"; // Tag of the enemy boats
+    private float nextFireTime; // Time of the next allowed fire
 
     private void Start()
     {
-        // Start firing after a random delay between 0 and 10 seconds
-        float randomDelay = Random.Range(0f, 10f);
-        Invoke("StartFiring", randomDelay);
-    }
-
-    private void StartFiring()
-    {
-        isFiring = true;
+        nextFireTime = Time.time;
     }
 
     private void Update()
     {
-        if (isFiring)
+        // Check if it's time to fire
+        if (Time.time >= nextFireTime)
         {
-            // Check if it's time to fire
-            if (Time.time >= nextFireTime)
+            // Fire projectiles
+            FireProjectile(); // Call FireProjectile here
+
+            // Find all enemy boats in the scene
+            GameObject[] enemyBoats = GameObject.FindGameObjectsWithTag(enemyBoatTag);
+
+            // Fire at each enemy boat
+            foreach (GameObject enemyBoat in enemyBoats)
             {
-                // Fire projectile
-                FireProjectile();
-
-                // Update shots fired
-                shotsFired++;
-
-                // Check if all shots have been fired
-                if (shotsFired >= 3)
-                {
-                    isFiring = false; // Stop firing
-                }
-                else
-                {
-                    // Calculate time for the next shot
-                    nextFireTime = Time.time + 1f / fireRate;
-                }
+                FireAtEnemy(enemyBoat.transform);
             }
+
+            // Update the next allowed fire time
+            nextFireTime = Time.time + 1f / fireRate;
         }
+    }
+
+
+    private void FireAtEnemy(Transform enemyTransform)
+    {
+        // Calculate direction to enemy
+        Vector3 directionToEnemy = (enemyTransform.position - firePoint.position).normalized;
+
+        // Rotate towards the enemy
+        Quaternion targetRotation = Quaternion.LookRotation(directionToEnemy, Vector3.up);
+        firePoint.rotation = Quaternion.RotateTowards(firePoint.rotation, targetRotation, 180f);
+
+        // Instantiate a projectile at the fire point
+        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
     }
 
     private void FireProjectile()
     {
-        // Instantiate the projectile at the current position and rotation of this GameObject
-        Instantiate(projectilePrefab, transform.position, transform.rotation);
+        Debug.Log("Firing projectile"); // Add debug log
+                                        // Instantiate the projectile prefab at the fire point
+        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
     }
+
 }
