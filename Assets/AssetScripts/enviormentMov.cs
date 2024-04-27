@@ -13,10 +13,18 @@ public class enviormentMov : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += new Vector3(0, 0, -50) * Time.deltaTime;
+        transform.position += new Vector3(0, 0, -30) * Time.deltaTime;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Destroy"))
+        {
+            Destroy(gameObject);
+        }
     }
 
-   
 }
+
+
 
 
