@@ -15,9 +15,6 @@ public class EnviormentTrigger : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(-90f, 0f, 0f);
             Instantiate(environmentSectionPrefab, position, rotation);
         }
-        else
-        {
-            Debug.Log("Other object entered trigger but does not have the 'Trigger' tag.");
-        }
+       
     }
 }
