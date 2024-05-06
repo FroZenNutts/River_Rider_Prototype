@@ -9,7 +9,9 @@ public class SpinningManager : MonoBehaviour
     private float timeInterval;
     private bool isCoroutine;
     private int finalAngle;
+    private int spinsDone; // New variable to keep track of spins
 
+    public Button spinButton; // Reference to the spin button
     public TextMeshProUGUI winText;
     public TextMeshProUGUI winText2;
     public int section;
@@ -20,11 +22,21 @@ public class SpinningManager : MonoBehaviour
     {
         isCoroutine = true;
         totalAngle = 360f / section;
+        spinsDone = 0; // Initialize spinsDone to 0
+        spinButton.onClick.AddListener(SpinButtonClicked); // Add listener for button click
     }
 
     void Update()
     {
-        if (Input.GetMouseButton(0) && isCoroutine)
+        if (Input.GetMouseButton(0) && isCoroutine && spinsDone < 2)
+        {
+            StartCoroutine(Spin());
+        }
+    }
+
+    void SpinButtonClicked()
+    {
+        if (isCoroutine && spinsDone < 2)
         {
             StartCoroutine(Spin());
         }
@@ -64,9 +76,22 @@ public class SpinningManager : MonoBehaviour
         for (int i = 0; i < section; i++)
         {
             if (finalAngle == i * totalAngle)
-                winText.text = PrizeName[i];
-                winText2.text = PrizeName[i];
+            {
+                if (spinsDone % 2 == 0) // Check if even or odd spin
+                    winText.text = PrizeName[i];
+                else
+                    winText2.text = PrizeName[i];
+            }
         }
         isCoroutine = true;
+        spinsDone++; // Increment spinsDone after each spin
+
+        if (spinsDone >= 2) // Disable spin button after two spins
+        {
+            spinButton.interactable = false;
+        }
     }
 }
+
+
+

@@ -22,16 +22,22 @@ public class ScoreManager : MonoBehaviour
     void Start()
     {
         highscore = PlayerPrefs.GetInt("highscore", 0);
-        scoreText.text = score.ToString() + "POINTS";
-        highscoreText.text = "HIGHSCORE:" + highscore.ToString();
+        scoreText.text = score.ToString() + " POINTS";
+        highscoreText.text = "HIGHSCORE: " + highscore.ToString();
     }
 
     // Update is called once per frame
     public void AddPoint()
     {
         score += 1;
-        scoreText.text = score.ToString() + "POINTS";
+        scoreText.text = score.ToString() + " POINTS";
         if (highscore < score)
-        PlayerPrefs.SetInt("highscore", score);
+        {
+            highscore = score;
+            PlayerPrefs.SetInt("highscore", score);
+            PlayerPrefs.Save(); // Save changes to PlayerPrefs
+            highscoreText.text = "HIGHSCORE: " + highscore.ToString();
+        }
     }
 }
+
